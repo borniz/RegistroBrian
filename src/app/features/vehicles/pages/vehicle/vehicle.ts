@@ -179,6 +179,7 @@ export class Vehicle {
       this.cerrarRecordModal();
     } catch (error) {
       console.error('Error creando el registro:', error);
+      alert(this.getErrorMessage(error, 'No se pudo guardar el registro.'));
     } finally {
       this.isSavingRecord.set(false);
     }
@@ -207,6 +208,7 @@ export class Vehicle {
     );
 
     this.records.set([]);
+    alert(this.getErrorMessage(error, 'No se pudo cargar el historial.'));
 
   }
 }
@@ -228,6 +230,7 @@ export class Vehicle {
           'No se pudo eliminar el registro:',
           error
         );
+        alert(this.getErrorMessage(error, 'No se pudo eliminar el registro.'));
     
       }
     }
@@ -256,6 +259,7 @@ export class Vehicle {
       this.cerrarModal();
     } catch (error) {
       console.error('Error capturado en el componente:', error);
+      alert(this.getErrorMessage(error, 'No se pudo guardar el vehículo.'));
     } finally {
       this.isSavingVehicle.set(false);
     }
@@ -274,6 +278,7 @@ export class Vehicle {
       this.cerrarEditar();
     } catch (error) {
       console.error('Error al actualizar el vehículo:', error);
+      alert(this.getErrorMessage(error, 'No se pudo actualizar el vehículo.'));
     } finally {
       this.isSavingVehicle.set(false);
     }
@@ -283,6 +288,8 @@ export class Vehicle {
     if(confirm("Desea eliminar el vehiculo"))
     {
       try {
+    await this.recordService.deleteRecordsByEntity(id, 'vehicle');
+    await this.recordService.deleteLegacyVehicleRecords(id);
     await this.vehicleService.deleteVehicle(id);
     
     // Si el vehículo eliminado estaba seleccionado visualmente, limpiamos la selección
@@ -292,12 +299,20 @@ export class Vehicle {
 
     // 4. Refrescamos la lista inmediatamente para que desaparezca de la tabla
     await this.loadVehicles();
+    await this.loadAllVehicleRecords();
     
     console.log('Vehículo eliminado con éxito.');
   } catch (error) {
     console.error('Error al intentar eliminar el vehículo:', error);
-    alert('Hubo un error al eliminar el vehículo. Inténtalo de nuevo.');
+    alert(this.getErrorMessage(error, 'Hubo un error al eliminar el vehículo. Inténtalo de nuevo.'));
   }
     }
+  }
+
+  private getErrorMessage(error: unknown, fallback: string): string {
+    if (typeof error === 'object' && error !== null && 'message' in error) {
+      return String(error.message);
+    }
+    return fallback;
   }
 }

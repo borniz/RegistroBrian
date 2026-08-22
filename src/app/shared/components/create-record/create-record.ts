@@ -35,6 +35,8 @@ export class CreateRecord {
 
   recordType = signal<RecordType>('egreso');
 
+  validationError = signal('');
+
   constructor() {
     effect(() => {
       const record = this.record();
@@ -54,12 +56,20 @@ export class CreateRecord {
     const description = this.description().trim();
 
     if (!description) {
+      this.validationError.set('La descripcion es obligatoria.');
       return;
     }
 
+    const price = this.price();
+    if (price === null || !Number.isFinite(price) || price < 0) {
+      this.validationError.set('El valor debe ser un numero mayor o igual a cero.');
+      return;
+    }
+
+    this.validationError.set('');
     this.onSubmitRecord.emit({
       description,
-      price: this.price() ?? undefined,
+      price,
       record_type: this.recordType()
     });
   }

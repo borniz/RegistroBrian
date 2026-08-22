@@ -108,4 +108,30 @@ export class RecordService {
       throw error;
     }
   }
+
+  async deleteRecordsByEntity(
+    entityId: number,
+    entityType: RecordEntityType
+  ): Promise<void> {
+    const { error } = await supabase
+      .from('records')
+      .delete()
+      .eq('entity_id', entityId)
+      .eq('entity_type', entityType);
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  async deleteLegacyVehicleRecords(vehicleId: number): Promise<void> {
+    const { error } = await supabase
+      .from('note_book')
+      .delete()
+      .eq('vehicle_id', vehicleId);
+
+    if (error) {
+      throw error;
+    }
+  }
 }
