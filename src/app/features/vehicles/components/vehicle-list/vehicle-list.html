@@ -1,0 +1,33 @@
+<section class="space-y-3">
+
+  <h2
+    class="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 text-left"
+  >
+    SELECCIONAR VEHICULO:
+  </h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    @for (vehicle of vehicles(); track vehicle.id) {
+
+      <app-vehicle-card
+        [vehicle]="vehicle"
+        [selected]="selectedVehicle()?.id === vehicle.id"
+        (onSelect)="seleccionarVehiculo($event)"
+        (onEdit)="editarVehiculo($event)"
+        (onDelete)="onDeleteVehicle.emit($event)"
+      />
+
+    } @empty {
+
+      <div
+        class="col-span-full border border-dashed border-zinc-600 p-6 text-center text-xs text-zinc-300"
+      >
+        VEHICULO NO REGISTRADO
+      </div>
+
+    }
+
+  </div>
+
+</section>

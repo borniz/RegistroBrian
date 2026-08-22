@@ -1,0 +1,314 @@
+@if (entityName()) {
+
+  <section
+    class="bg-[#0f1112] border border-zinc-600 rounded-none p-4 sm:p-6 space-y-6 animate-fadeIn text-left"
+  >
+
+    <!-- CABECERA -->
+
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-zinc-600"
+    >
+
+      <div class="space-y-1">
+
+        <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+
+          <span
+            class="text-[9px] font-bold tracking-widest text-zinc-300 uppercase"
+          >
+             HISTORIAL DE REGISTROS
+          </span>
+
+          <span class="text-zinc-700 text-xs hidden sm:inline">
+            /
+          </span>
+
+          <span
+            class="text-[10px] text-zinc-400 font-bold bg-zinc-900 px-2 py-0.5 border border-zinc-600"
+          >
+            {{ records().length }} REGISTROS
+          </span>
+
+        </div>
+
+
+        <h2
+          class="text-base sm:text-lg font-bold text-white uppercase tracking-tight"
+        >
+
+          HISTORIAL:
+
+          <span class="text-[#ccff00]">
+            {{ entityName() }}
+          </span>
+
+        </h2>
+
+      </div>
+
+
+      <!-- CREAR REGISTRO -->
+
+      <button
+        type="button"
+        (click)="crearRegistro()"
+        class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#ccff00] hover:bg-[#bce600] text-black font-bold rounded-none transition-colors duration-150 cursor-pointer text-xs uppercase tracking-wider active:bg-[#a6cf00]"
+      >
+
+        <span>
+          + CREAR NUEVO REGISTRO
+        </span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+
+          <path d="M5 12h14" />
+          <path d="M12 5v14" />
+
+        </svg>
+
+      </button>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+      @for (summary of [weeklySummary(), monthlySummary()]; track $index) {
+
+        <div class="border border-zinc-600 bg-[#090a0b] p-3 space-y-3">
+
+          <div class="flex justify-between items-center border-b border-zinc-900 pb-2">
+            <span class="text-[10px] text-white font-bold uppercase tracking-widest">
+              {{ $index === 0 ? 'RESUMEN SEMANAL' : 'RESUMEN MENSUAL' }}
+            </span>
+            <span class="text-[9px] text-zinc-400 uppercase">
+              {{ $index === 0 ? 'SEMANA ACTUAL' : 'MES ACTUAL' }}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 text-[9px] uppercase tracking-wider">
+            <div>
+              <span class="block text-zinc-400">Ingresos</span>
+              <strong class="block text-emerald-400 mt-1">
+                {{ summary.ingresos | currency:'$':'symbol':'1.0-0' }}
+              </strong>
+            </div>
+            <div>
+              <span class="block text-zinc-400">Egresos</span>
+              <strong class="block text-red-400 mt-1">
+                {{ summary.egresos | currency:'$':'symbol':'1.0-0' }}
+              </strong>
+            </div>
+            <div>
+              <span class="block text-zinc-400">Balance</span>
+              <strong
+                class="block mt-1"
+                [class.text-emerald-400]="summary.balance >= 0"
+                [class.text-red-400]="summary.balance < 0"
+              >
+                {{ summary.balance | currency:'$':'symbol':'1.0-0' }}
+              </strong>
+            </div>
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- LISTA DE REGISTROS -->
+
+    <div class="space-y-3">
+
+      @for (record of records(); track record.id) {
+
+        <div
+          class="flex flex-col md:flex-row justify-between items-start gap-4 p-4 bg-[#090a0b] border border-zinc-600 hover:border-zinc-700 transition-colors rounded-none w-full"
+        >
+
+          <div class="space-y-3 flex-1 w-full">
+
+            <!-- FECHA -->
+
+            <div class="flex items-center space-x-3 text-[10px]">
+
+              <span
+                class="text-zinc-300 border border-zinc-600 px-2 py-0.5 bg-zinc-900/40 text-[9px] font-bold"
+              >
+
+                {{ record.create_date
+                  ? (record.create_date | date:'shortDate')
+                  : 'NULL'
+                }}
+
+              </span>
+
+
+              <span class="text-zinc-300 font-bold">
+
+                {{ record.create_date
+                  ? (record.create_date | date:'shortTime')
+                  : ''
+                }}
+
+              </span>
+
+            </div>
+
+
+            <!-- DESCRIPCIÓN -->
+
+            <div>
+              <span
+                class="inline-block text-[9px] font-bold uppercase tracking-widest px-2 py-1 border"
+                [class.text-emerald-400]="record.record_type === 'ingreso'"
+                [class.border-emerald-900]="record.record_type === 'ingreso'"
+                [class.text-red-400]="record.record_type !== 'ingreso'"
+                [class.border-red-900]="record.record_type !== 'ingreso'"
+              >
+                {{ record.record_type === 'ingreso' ? 'INGRESO' : 'EGRESO' }}
+              </span>
+            </div>
+
+            <div
+              class="text-xs text-zinc-300 font-sans leading-relaxed whitespace-pre-line pl-1 break-words"
+            >
+
+              <span
+                class="block text-[9px] font-bold text-zinc-300 uppercase tracking-widest mb-1.5 font-mono"
+              >
+                / CONTENIDO DEL REPORTE
+              </span>
+
+              {{ record.description }}
+
+            </div>
+
+          </div>
+
+
+          <!-- PRECIO -->
+
+          @if (record.price !== null && record.price !== undefined) {
+
+            <div
+              class="flex md:flex-col items-center md:items-end justify-between md:justify-center w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-zinc-900/60 flex-none min-w-0 md:min-w-[130px]"
+            >
+
+              <span
+                class="text-[9px] text-zinc-300 uppercase tracking-widest font-bold"
+              >
+                VALOR DEL REGISTRO
+              </span>
+             
+              <p
+
+                class="text-sm sm:text-base font-bold text-[#ccff00] mt-0.5"
+                [class.text-red-500]="record.record_type === 'egreso'"
+              >
+                {{ record.price | currency:'$':'symbol':'1.0-0' }}
+              </p>
+
+            </div>
+
+          }
+
+
+          <!-- ACCIONES -->
+
+          <div class="flex items-start md:items-center gap-2">
+
+            <button
+              type="button"
+              (click)="editarRegistro(record)"
+              title="Editar registro"
+              class="flex-none p-2 border border-transparent hover:border-[#ccff00] bg-zinc-900/30 text-zinc-300 hover:text-[#ccff00] transition-colors"
+            >
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19.5 7.125 16.875 4.5"
+                />
+
+              </svg>
+
+            </button>
+
+            <button
+              type="button"
+              (click)="eliminarRegistro(record.id!)"
+              title="Eliminar registro"
+              class="flex-none p-2 border border-transparent hover:border-zinc-700 bg-zinc-900/30 text-zinc-300 transition-colors"
+            >
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 6h18M8 6v14a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6M10 3h4m-4 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1"
+                />
+
+              </svg>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      } @empty {
+
+        <div
+          class="text-center py-12 bg-[#090a0b] border border-zinc-900"
+        >
+
+          <p
+            class="text-zinc-300 text-xs tracking-wider"
+          >
+            NO SE ENCONTRÓ REGISTRO
+          </p>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+}

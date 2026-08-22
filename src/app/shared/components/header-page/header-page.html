@@ -1,0 +1,46 @@
+<header class="flex flex-col lg:flex-row justify-between items-start lg:items-center border border-zinc-600 bg-[#0f1112] p-4 sm:p-6 text-left rounded-none gap-4">
+  
+  <div class="space-y-1">
+    <div class="flex items-center space-x-2">
+      <span class="h-1.5 w-1.5 bg-[#ccff00]"></span>
+      <span class="text-[9px] font-bold tracking-[0.22em] text-[#ccff00] uppercase">
+        SYSTEM OPERATION // LIVE
+      </span>
+    </div>
+    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white uppercase">
+      Auditoria De {{titlePage()}}
+    </h1>
+    <p class="text-[11px] text-zinc-300 max-w-xl font-sans">
+      Consola de administración y bitácora privada de incidentes,
+      {{headingPage()}}
+    </p>
+  </div>
+
+  <!-- BOTÓN DE ACCIÓN: Ejecuta el método abrirModal() -->
+  <button
+  (click)="abrirModal()"
+    
+    class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-[#ccff00] hover:bg-[#bce600] text-black font-bold rounded-none transition-colors duration-150 cursor-pointer text-xs uppercase tracking-wider active:bg-[#a6cf00]"
+  >
+    {{createElement()}}
+  </button>
+
+  <div class="flex w-full lg:w-auto border border-zinc-600 bg-[#090a0b] p-3 text-xs justify-between sm:justify-start">
+    <div class="px-4 border-r border-zinc-600">
+      <span class="block text-[9px] text-zinc-300 uppercase tracking-widest">
+        {{elementUnit()}}
+      </span>
+      <span class="font-bold text-white text-xs sm:text-sm">
+        <!-- Invocamos la señal con paréntesis: vehicles().length -->
+        {{elementAssets()}} Activos
+      </span>
+    </div>
+    <div class="px-4 flex items-center">
+      <span class="text-[10px] text-[#ccff00] bg-[#ccff00]/10 px-2 py-0.5 border border-[#ccff00]/30 font-bold uppercase">
+        SEGURO
+      </span>
+    </div>
+  </div>
+
+</header>
+

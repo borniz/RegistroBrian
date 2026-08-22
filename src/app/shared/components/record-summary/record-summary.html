@@ -1,0 +1,115 @@
+<section class="space-y-4 text-left">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-zinc-600 pb-3">
+    <div>
+      <span class="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">{{ title() }}</span>
+      <h2 class="text-base font-bold text-white uppercase tracking-tight">{{ scopeLabel() }}</h2>
+    </div>
+    <span class="text-[9px] text-zinc-400 uppercase">INGRESOS Y EGRESOS</span>
+  </div>
+
+  @if (!detailOnly()) {
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+    @for (summary of [weeklySummary(), monthlySummary()]; track $index) {
+      <button
+        type="button"
+        (click)="seleccionarPeriodo($index === 0 ? 'weekly' : 'monthly')"
+        class="border bg-[#0f1112] p-4 space-y-4 text-left transition-colors cursor-pointer"
+        [class.border-[#ccff00]]="($index === 0 ? selectedPeriod() === 'weekly' : selectedPeriod() === 'monthly')"
+        [class.border-zinc-600]="($index === 0 ? selectedPeriod() !== 'weekly' : selectedPeriod() !== 'monthly')"
+      >
+        <div class="flex justify-between items-center">
+          <span class="text-[10px] text-white font-bold uppercase tracking-widest">
+            {{ $index === 0 ? 'REPORTE SEMANAL' : 'REPORTE MENSUAL' }}
+          </span>
+          <span class="text-[9px] text-zinc-400 uppercase">
+            {{ $index === 0 ? 'SEMANA ACTUAL' : 'MES ACTUAL' }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <span class="block text-[9px] text-zinc-400 uppercase tracking-wider">Ingresos</span>
+            <strong class="block text-sm text-emerald-400 mt-1">
+              {{ summary.ingresos | currency:'COP':'symbol':'1.0-0' }}
+            </strong>
+          </div>
+          <div>
+            <span class="block text-[9px] text-zinc-400 uppercase tracking-wider">Egresos</span>
+            <strong class="block text-sm text-red-400 mt-1">
+              {{ summary.egresos | currency:'COP':'symbol':'1.0-0' }}
+            </strong>
+          </div>
+          <div>
+            <span class="block text-[9px] text-zinc-400 uppercase tracking-wider">Balance</span>
+            <strong
+              class="block text-sm mt-1"
+              [class.text-emerald-400]="summary.balance >= 0"
+              [class.text-red-400]="summary.balance < 0"
+            >
+              {{ summary.balance | currency:'COP':'symbol':'1.0-0' }}
+            </strong>
+          </div>
+        </div>
+      </button>
+    }
+  </div>
+  }
+
+  @if (detailOnly() && selectedSummary(); as summary) {
+    <div class="border border-[#ccff00] bg-[#0f1112] p-4 sm:p-6 space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-600 pb-3">
+        <div>
+          <span class="text-[9px] text-[#ccff00] font-bold uppercase tracking-widest">DETALLE DEL BALANCE</span>
+          <h3 class="text-base text-white font-bold uppercase tracking-tight mt-1">{{ selectedPeriodLabel() }}</h3>
+        </div>
+        <span class="text-[9px] text-zinc-400 uppercase">{{ scopeLabel() }}</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="border border-emerald-900 bg-[#090a0b] p-4">
+          <span class="block text-[9px] text-zinc-400 uppercase tracking-widest">Ingresos totales</span>
+          <strong class="block text-lg text-emerald-400 mt-2">
+            {{ summary.ingresos | currency:'COP':'symbol':'1.0-0' }}
+          </strong>
+        </div>
+        <div class="border border-red-900 bg-[#090a0b] p-4">
+          <span class="block text-[9px] text-zinc-400 uppercase tracking-widest">Egresos totales</span>
+          <strong class="block text-lg text-red-400 mt-2">
+            {{ summary.egresos | currency:'COP':'symbol':'1.0-0' }}
+          </strong>
+        </div>
+        <div class="border border-zinc-600 bg-[#090a0b] p-4">
+          <span class="block text-[9px] text-zinc-400 uppercase tracking-widest">Balance total</span>
+          <strong
+            class="block text-lg mt-2"
+            [class.text-emerald-400]="summary.balance >= 0"
+            [class.text-red-400]="summary.balance < 0"
+          >
+            {{ summary.balance | currency:'COP':'symbol':'1.0-0' }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <span class="block text-[9px] text-zinc-400 font-bold uppercase tracking-widest">
+          BALANCE POR VEHICULO
+        </span>
+
+        @for (entitySummary of entitySummaries(); track entitySummary.entityId) {
+          <div class="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr_1fr] gap-3 items-center border border-zinc-600 bg-[#090a0b] p-3">
+            <strong class="text-xs text-white uppercase">{{ entitySummary.entityName }}</strong>
+            <span class="text-[10px] text-emerald-400">INGRESOS: {{ entitySummary.ingresos | currency:'COP':'symbol':'1.0-0' }}</span>
+            <span class="text-[10px] text-red-400">EGRESOS: {{ entitySummary.egresos | currency:'COP':'symbol':'1.0-0' }}</span>
+            <span class="text-[10px]" [class.text-emerald-400]="entitySummary.balance >= 0" [class.text-red-400]="entitySummary.balance < 0">
+              BALANCE: {{ entitySummary.balance | currency:'COP':'symbol':'1.0-0' }}
+            </span>
+          </div>
+        } @empty {
+          <div class="border border-dashed border-zinc-600 p-5 text-center text-[10px] text-zinc-400 uppercase">
+            NO HAY MOVIMIENTOS EN ESTE PERIODO
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

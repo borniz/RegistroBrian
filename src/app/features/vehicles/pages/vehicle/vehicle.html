@@ -1,0 +1,125 @@
+<div class="space-y-8">
+  <!-- HEADER -->
+  <app-header-page
+    [titlePage]="'VEHICULOS'"
+    [headingPage]="'Reparaciones y flujos para las flotas de vehículos'"
+    [createElement]="'Registrar Vehículo'"
+    [elementUnit]="'vehículos'"
+    [elementAssets]="vehicles().length"
+    (onOpenModal)="abrirModal()"
+  />
+
+  <!-- LISTA (Corregido para escuchar los eventos estrictos que emiten el VehicleModel) -->
+  <app-vehicle-list
+    [vehicles]="vehicles()"
+    [selectedVehicle]="selectedVehicle()"
+    (onSelectVehicle)="seleccionarVehiculo($event)"
+    (onEditVehicle)="editarVehiculo($event)"
+    (onDeleteVehicle)="eliminarVehiculo($event)"
+  />
+
+  <app-record-summary
+    [records]="allVehicleRecords()"
+    [title]="'REPORTES DE FLOTA'"
+    [scopeLabel]="'TODOS LOS VEHICULOS'"
+    (onPeriodSelected)="abrirReporte($event)"
+  />
+</div>
+
+<app-create-edit-element
+  [isOpen]="isReportModalOpen()"
+  [modalTitle]="selectedReportPeriod() === 'weekly' ? 'REPORTE SEMANAL' : 'REPORTE MENSUAL'"
+  [modalSubtitle]="'BALANCE GLOBAL DE LA FLOTA'"
+  [size]="'max-w-5xl'"
+  [showSubmit]="false"
+  (onClose)="cerrarReporte()"
+>
+  <app-record-summary
+    [records]="allVehicleRecords()"
+    [entityLabels]="vehicleLabels()"
+    [scopeLabel]="'TODOS LOS VEHICULOS'"
+    [detailOnly]="true"
+    [period]="selectedReportPeriod()"
+  />
+</app-create-edit-element>
+
+<!-- =============================== -->
+<!-- CREAR VEHÍCULO -->
+<!-- =============================== -->
+<app-create-edit-element
+  [isOpen]="isCreateVehicleOpen()"
+  [modalTitle]="'CREAR NUEVO VEHICULO'"
+  [modalSubtitle]="'Módulo: REGISTRO DE FLOTA'"
+  [isSaving]="isSavingVehicle()"
+  (onClose)="cerrarModal()"
+  (onSubmitForm)="formCrear.guardar()"
+>
+  <!-- El formulario interno es el que captura el objeto y lo envía mediante (onSave) -->
+  <app-vehicle-form #formCrear [isSaving]="isSavingVehicle()" (onSave)="guardarVehiculo($event)" />
+</app-create-edit-element>
+
+<!-- =============================== -->
+<!-- EDITAR VEHÍCULO -->
+<!-- =============================== -->
+<app-create-edit-element
+
+  [isOpen]="isEditVehicleOpen()"
+  [modalTitle]="'MODIFICAR_VEHICULO'"
+  [modalSubtitle]="'Módulo: REGISTRO DE FLOTA'"
+  [isSaving]="isSavingVehicle()"
+  (onClose)="cerrarEditar()"
+  (onSubmitForm)="formEditar.guardar()"
+>
+  <!-- Corregido property binding a [vehicle] y asignación de evento a (onSave) con $event -->
+  <app-vehicle-form
+    #formEditar
+    [vehicle]="vehicleToEdit() ?? { plate: '', driver: '', creation_vehicle: '' }"
+    [isSaving]="isSavingVehicle()"
+    (onSave)="actualizarVehiculo($event)"
+  />
+</app-create-edit-element>
+
+<!-- Delete Vehicle -->
+
+<!-- ============================= -->
+<!-- HISTORIAL -->
+<!-- ============================= -->
+
+@if (selectedVehicle()) {
+   <app-create-edit-element
+    [isOpen]="isHistoryModalOpen()"
+    [size]="'max-w-1xl'"
+    [modalTitle]="'REGISTROS DE LA UNIDAD'"
+    [modalSubtitle]="'Módulo: AUDITORÍA DE MANTENIMIENTO'"
+    (onClose)="cerrarHistorialModal()"
+  >
+  <app-record-history
+    [records]="records()"
+    [entityName]="'PLACA: ' + selectedVehicle()?.plate"
+    (onCreateRecord)="openCreateRecord()"
+    (onEditRecord)="editarRegistro($event)"
+    (onDeleteRecord)="deleteRecord($event)"
+  ></app-record-history>
+  </app-create-edit-element>
+}
+
+<!-- ============================= -->
+<!-- MODAL CREAR REGISTRO -->
+<!-- ============================= -->
+
+@if (isCreateRecordOpen() && selectedVehicle()) {
+  <app-create-edit-element
+    [isOpen]="isCreateRecordOpen()"
+    [isSaving]="isSavingRecord()"
+    [modalTitle]="recordToEdit() ? 'EDITAR REGISTRO' : 'CREAR REGISTRO'"
+  >
+    <!-- Aquí proyectamos el contenido específico usando ng-content -->
+    <app-create-record
+      [vehiclePlate]="selectedVehicle()?.plate || ''"
+      [record]="recordToEdit()"
+      (onSubmitRecord)="openCreateRecord($any($event))"
+      (onClose)="cerrarRecordModal()"
+    >
+    </app-create-record>
+  </app-create-edit-element>
+}
