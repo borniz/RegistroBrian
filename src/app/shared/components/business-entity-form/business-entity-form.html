@@ -1,0 +1,16 @@
+<div class="space-y-4">
+  <div class="space-y-1.5">
+    <label class="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">{{ labels().name }}</label>
+    <input required type="text" name="name" [(ngModel)]="form.name" class="w-full px-3 py-2.5 text-xs text-zinc-200 bg-[#090a0b] border border-zinc-600 focus:outline-none focus:border-[#ccff00] rounded-none uppercase" />
+  </div>
+
+  <div class="space-y-1.5">
+    <label class="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">{{ labels().description }}</label>
+    <textarea name="description" rows="3" [(ngModel)]="form.description" class="w-full px-3 py-2.5 text-xs text-zinc-200 bg-[#090a0b] border border-zinc-600 focus:outline-none focus:border-[#ccff00] rounded-none"></textarea>
+  </div>
+
+  <div class="space-y-1.5">
+    <label class="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">FECHA DE REGISTRO</label>
+    <input required type="date" name="creation_date" [(ngModel)]="form.creation_date" class="w-full px-3 py-2.5 text-xs text-zinc-200 bg-[#090a0b] border border-zinc-600 focus:outline-none focus:border-[#ccff00] rounded-none" />
+  </div>
+</div>

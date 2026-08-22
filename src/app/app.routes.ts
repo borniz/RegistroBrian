@@ -21,6 +21,10 @@ export const routes: Routes = [
         path: 'store',
         loadComponent: () => import('./store/store').then(m => m.Store)
       },
+      {
+        path: 'restaurant',
+        loadComponent: () => import('./restaurant/restaurant').then(m => m.Restaurant)
+      },
       
     ]
   }

@@ -1,0 +1,33 @@
+<section class="space-y-3">
+  <h2 class="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-300 text-left">SELECCIONAR {{ entityLabel() }}</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (entity of entities(); track entity.id) {
+      <div
+        (click)="onSelect.emit(entity)"
+        class="flex items-center justify-between gap-4 p-4 border transition-all cursor-pointer text-left min-h-[120px]"
+        [class.bg-[#141718]]="selected()?.id === entity.id"
+        [class.border-[#ccff00]]="selected()?.id === entity.id"
+        [class.bg-[#0f1112]]="selected()?.id !== entity.id"
+        [class.border-zinc-600]="selected()?.id !== entity.id"
+      >
+        <div class="min-w-0 flex-1 space-y-2">
+          <h3 class="font-bold text-sm uppercase truncate" [class.text-[#ccff00]]="selected()?.id === entity.id" [class.text-white]="selected()?.id !== entity.id">
+            {{ entity.name }}
+          </h3>
+          <p class="text-xs text-zinc-400 truncate">{{ entity.description || 'SIN DESCRIPCION' }}</p>
+          <p class="text-[9px] text-zinc-300 uppercase">REGISTRADO: {{ entity.creation_date }}</p>
+        </div>
+        <div class="flex gap-1">
+          <button type="button" (click)="editar($event, entity)" title="Editar" class="p-2 text-zinc-300 hover:text-[#ccff00] border border-transparent hover:border-zinc-700">
+            <span aria-hidden="true">&#9998;</span>
+          </button>
+          <button type="button" (click)="eliminar($event, entity)" title="Eliminar" class="p-2 text-zinc-300 hover:text-red-400 border border-transparent hover:border-zinc-700">
+            <span aria-hidden="true">&#128465;</span>
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="col-span-full border border-dashed border-zinc-600 p-6 text-center text-xs text-zinc-300 uppercase">NO HAY ELEMENTOS REGISTRADOS</div>
+    }
+  </div>
+</section>

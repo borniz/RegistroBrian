@@ -1,1 +1,29 @@
-<p>restaurant works!</p>
+<div class="space-y-8">
+	<app-header-page titlePage="RESTAURANTE" headingPage="Control operativo y financiero del restaurante" createElement="Registrar Restaurante" elementUnit="restaurantes" [elementAssets]="entities().length" (onOpenModal)="openCreate()" />
+	<app-business-entity-list [entities]="entities()" [selected]="selected()" entityLabel="RESTAURANTE" (onSelect)="selectEntity($event)" (onEdit)="openEdit($event)" (onDelete)="removeEntity($event)" />
+	<app-record-summary [records]="allRecords()" title="REPORTES DEL RESTAURANTE" scopeLabel="TODOS LOS RESTAURANTES" (onPeriodSelected)="openReport($event)" />
+</div>
+
+<app-create-edit-element [isOpen]="isReportModalOpen()" [modalTitle]="reportPeriod() === 'weekly' ? 'REPORTE SEMANAL' : 'REPORTE MENSUAL'" modalSubtitle="BALANCE GLOBAL DEL RESTAURANTE" size="max-w-5xl" [showSubmit]="false" (onClose)="closeReport()">
+	<app-record-summary [records]="allRecords()" [entityLabels]="entityLabels()" scopeLabel="TODOS LOS RESTAURANTES" [detailOnly]="true" [period]="reportPeriod()" />
+</app-create-edit-element>
+
+<app-create-edit-element [isOpen]="isEntityModalOpen()" modalTitle="CREAR RESTAURANTE" modalSubtitle="REGISTRO OPERATIVO" [isSaving]="isSaving()" (onClose)="closeEntityModal()" (onSubmitForm)="createForm.guardar()">
+	<app-business-entity-form #createForm [labels]="{ name: 'NOMBRE DEL RESTAURANTE', description: 'DESCRIPCION DEL RESTAURANTE' }" [isSaving]="isSaving()" (onSave)="saveEntity($event)" />
+</app-create-edit-element>
+
+<app-create-edit-element [isOpen]="isEditEntityModalOpen()" modalTitle="EDITAR RESTAURANTE" modalSubtitle="ACTUALIZAR REGISTRO" [isSaving]="isSaving()" (onClose)="closeEntityModal()" (onSubmitForm)="editForm.guardar()">
+	<app-business-entity-form #editForm [entity]="entityToEdit()" [labels]="{ name: 'NOMBRE DEL RESTAURANTE', description: 'DESCRIPCION DEL RESTAURANTE' }" [isSaving]="isSaving()" (onSave)="saveEntity($event)" />
+</app-create-edit-element>
+
+@if (selected()) {
+	<app-create-edit-element [isOpen]="isHistoryModalOpen()" modalTitle="HISTORIAL DE REGISTROS" modalSubtitle="AUDITORIA FINANCIERA" size="max-w-5xl" [showSubmit]="false" (onClose)="closeHistory()">
+		<app-record-history [records]="records()" [entityName]="selected()!.name" (onCreateRecord)="openCreateRecord()" (onEditRecord)="editRecord($event)" (onDeleteRecord)="deleteRecord($event)" />
+	</app-create-edit-element>
+}
+
+@if (isRecordModalOpen() && selected()) {
+	<app-create-edit-element [isOpen]="isRecordModalOpen()" [modalTitle]="recordToEdit() ? 'EDITAR REGISTRO' : 'CREAR REGISTRO'" modalSubtitle="MOVIMIENTO FINANCIERO" [isSaving]="isSaving()" (onClose)="closeRecord()" (onSubmitForm)="recordForm.guardar()">
+		<app-create-record #recordForm [vehiclePlate]="selected()!.name" [record]="recordToEdit()" [isSaving]="isSaving()" (onSubmitRecord)="saveRecord($event)" (onClose)="closeRecord()" />
+	</app-create-edit-element>
+}

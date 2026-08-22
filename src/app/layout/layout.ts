@@ -16,6 +16,7 @@ export class Layout {
   menuItems = [
     { path: '/', label: 'INICIO', icon: '📁' },
     { path: '/vehicle', label: 'REGISTRO VEHICULAR', icon: '🚖' },
+    { path: '/restaurant', label: 'REGISTRO DE RESTAURANTE', icon: '🍽️' },
     { path: '/store', label: 'REGISTRO DE ALMACENAMIENTO', icon: '🔨' },
   ];
 
