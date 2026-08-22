@@ -12,45 +12,22 @@
     </h2>
   </div>
 
-  <!-- SECCIÓN DE MÉTRICAS / KPI (Cuadrícula Táctica) -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    
-    <!-- Tarjeta: Vehículos -->
-    <div class="bg-[#0f1112] border border-zinc-800 p-5 relative overflow-hidden group hover:border-zinc-700 transition-colors">
-      <div class="absolute top-0 right-0 p-3 text-xl opacity-30 group-hover:opacity-100 transition-opacity">🚖</div>
-      <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">VEHÍCULOS REGISTRADOS</p>
-      <p class="text-3xl font-bold text-white font-mono mt-2">1,248</p>
-      <div class="mt-4 flex items-center space-x-1.5 text-[9px] text-[#ccff00]/80">
-        <span>+12% ESTE MES</span>
-        <span class="text-zinc-600">▪</span>
-        <span class="text-zinc-400">SYS_OK</span>
-      </div>
-    </div>
-
-    <!-- Tarjeta: Almacén -->
-    <div class="bg-[#0f1112] border border-zinc-800 p-5 relative overflow-hidden group hover:border-zinc-700 transition-colors">
-      <div class="absolute top-0 right-0 p-3 text-xl opacity-30 group-hover:opacity-100 transition-opacity">🔨</div>
-      <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">ITEMS EN ALMACENAMIENTO</p>
-      <p class="text-3xl font-bold text-white font-mono mt-2">84,102</p>
-      <div class="mt-4 flex items-center space-x-1.5 text-[9px] text-zinc-400">
-        <span class="text-red-500 font-bold">⚠️ 2 ALERTAS STOCK</span>
-        <span class="text-zinc-600">▪</span>
-        <span>ALMACÉN_A</span>
-      </div>
-    </div>
-
-    <!-- Tarjeta: Restaurantes -->
-    <div class="bg-[#0f1112] border border-zinc-800 p-5 relative overflow-hidden group hover:border-zinc-700 transition-colors">
-      <div class="absolute top-0 right-0 p-3 text-xl opacity-30 group-hover:opacity-100 transition-opacity">🍔</div>
-      <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">PEDIDOS PROCESADOS</p>
-      <p class="text-3xl font-bold text-white font-mono mt-2">439</p>
-      <div class="mt-4 flex items-center space-x-1.5 text-[9px] text-[#ccff00]/80">
-        <span>ACTIVOS_AHORA: 18</span>
-        <span class="text-zinc-600">▪</span>
-        <span class="text-zinc-400">ONLINE</span>
-      </div>
-    </div>
-
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    @for (summary of summaries(); track summary.label) {
+      <section class="bg-[#0f1112] border border-zinc-800 p-5 relative overflow-hidden group hover:border-zinc-700 transition-colors">
+        <div class="absolute top-0 right-0 p-3 text-xl opacity-30 group-hover:opacity-100 transition-opacity">{{ summary.icon }}</div>
+        <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">BALANCE TOTAL</p>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider mt-2">{{ summary.label }}</h3>
+        <p class="text-2xl font-bold mt-3" [class.text-emerald-400]="summary.balance >= 0" [class.text-red-400]="summary.balance < 0">
+          {{ summary.balance | currency:'COP':'symbol':'1.0-0' }}
+        </p>
+        <div class="grid grid-cols-2 gap-3 mt-5 border-t border-zinc-800 pt-3 text-[9px] uppercase">
+          <div><span class="block text-zinc-500">Ingresos</span><strong class="block text-emerald-400 mt-1">{{ summary.ingresos | currency:'COP':'symbol':'1.0-0' }}</strong></div>
+          <div><span class="block text-zinc-500">Egresos</span><strong class="block text-red-400 mt-1">{{ summary.egresos | currency:'COP':'symbol':'1.0-0' }}</strong></div>
+        </div>
+        <p class="mt-4 text-[9px] text-zinc-500 uppercase">{{ summary.records }} registros financieros</p>
+      </section>
+    }
   </div>
 
   <!-- SECCIÓN INFERIOR: LOGS DE ACTIVIDAD RECIENTE -->
