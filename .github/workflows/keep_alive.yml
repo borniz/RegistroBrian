@@ -1,0 +1,17 @@
+name: Mantener Supabase Activo
+
+on:
+  schedule:
+    # Se ejecuta de forma automática a las 00:00 UTC todos los martes y sábados
+    - cron: '0 0 * * 2,6'
+  workflow_dispatch: # Permite activar la automatización manualmente desde GitHub
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Realizar consulta de actividad a la API
+        run: |
+          curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/rpc/get_size_by_schema" \
+          -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_KEY }}"
